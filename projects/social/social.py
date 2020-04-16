@@ -1,4 +1,5 @@
 import random
+from util import Queue
 
 class User:
     def __init__(self, name):
@@ -80,8 +81,40 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        for num in self.friendships:
+            paths = self.bfs(num, user_id)
+            if paths:
+                paths.reverse()
+            visited[num] = paths
         return visited
 
+    def get_neighbors(self, vertex_id):
+        if vertex_id in self.friendships:
+            return self.friendships[vertex_id]
+        else:
+            raise ValueError("vertex does not exist")
+
+    def bfs(self, starting_vertex, destination_vertex):
+        # Create a q and enqueue starting vertex
+        qq = Queue()
+        qq.enqueue([starting_vertex])
+        # Create a set of traversed vertices
+        visited = set()
+        # While queue is not empty:
+        while qq.size() > 0:
+            # dequeue/pop the first vertext
+            path = qq.dequeue()
+            # if not visited
+            if path[-1] not in visited:
+                # DO THE THING!!!!!
+                visited.add(path[-1])
+                if path[-1] == destination_vertex:
+                    return path
+                else:
+                    for next_vert in self.get_neighbors(path[-1]):
+                        new_path = list(path)
+                        new_path.append(next_vert)
+                        qq.enqueue(new_path)
 
 if __name__ == '__main__':
     sg = SocialGraph()
